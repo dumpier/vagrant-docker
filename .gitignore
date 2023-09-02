@@ -1,0 +1,10 @@
+.settings
+.buildpath
+.project
+
+
+.vagrant
+vendor
+data*.sql
+
+.DS_Store

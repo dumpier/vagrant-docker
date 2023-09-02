@@ -1,0 +1,124 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.21
+    ports:
+      - 80:80
+    volumes:
+      - ./containers/nginx/conf.d:/etc/nginx/conf.d
+      - ./code:/var/www/html/code
+      - ../project/:/var/www/html/project
+    depends_on:
+      - php
+
+  php:
+    build: ./containers/php
+    container_name: php
+    volumes:
+      - ./containers/php/php.ini:/usr/local/etc/php/php.ini
+      - ./containers/php/conf.d/fakemail.ini:/usr/local/etc/php/conf.d/fakemail.ini
+      - ./code/php:/var/www/html/code/php
+      - ../project/:/var/www/html/project
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.10
+    extra_hosts:
+      - "api.local.mysite.test:172.24.0.21"
+    tty: true
+    depends_on:
+      - mysql
+    links:
+      - mysql
+      - fakemail
+      - redis
+
+  nodejs:
+    image : node:latest
+    container_name: nodejs
+    tty: true
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./code/nodejs:/usr/src/app
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.11
+    ports:
+      - 3000:3000
+    working_dir: /usr/src/app
+    command: "nodejs /usr/src/app/index.js"
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./containers/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+      - /vagrant/docker-data/mongo/mongo-data:/data/db
+    # Start mongo with authentication enabled
+    command: [mongod, --auth]
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.12
+
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.13
+    ports:
+      - "6379:6379"
+    volumes:
+      - /vagrant/docker-data/redis/data:/data
+
+  mysql:
+    image: mariadb:10.11
+    container_name: mysql
+    volumes:
+      - ./containers/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./containers/mysql/scripts:/docker-entrypoint-initdb.d
+      - /vagrant/docker-data/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mysite
+      MYSQL_USER: develop
+      MYSQL_PASSWORD: develop
+      TZ: Asia/Tokyo
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.14
+    ports:
+      - 3306:3306
+
+  fakemail:
+    image: mailhog/mailhog:latest
+    #image: axllent/mailpit:latest
+    container_name: fakemail
+    tty: true
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.15
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    #environment:
+    #  MP_DATA_FILE: /home/mailpit/mails
+    #  MP_SMTP_SSL_CERT: /keys/cert.pem #これを追加
+    #  MP_SMTP_SSL_KEY: /keys/privkey.pem #これを追加
+    # volumes:
+    #  - /vagrant/docker-data/mailpit:/home/mailpit/mails
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.24.0.0/24
