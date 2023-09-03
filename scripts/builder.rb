@@ -25,6 +25,8 @@ Vagrant.configure("2") do |config|
 		v.functional_vboxsf	 = false
 		v.memory = 1024
 		v.cpus = 1
+		# Windowsの場合symbolic linkを有効化
+		v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/.","1"]
 	end
 
 	if Vagrant.has_plugin?("vagrant-vbguest") then

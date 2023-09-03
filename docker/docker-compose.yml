@@ -36,21 +36,22 @@ services:
       - fakemail
       - redis
 
-  nodejs:
-    image : node:latest
-    container_name: nodejs
+  node:
+    image: node:latest
+    # build: ./containers/node
+    container_name: node
     tty: true
     environment:
       - NODE_ENV=development
     volumes:
-      - ./code/nodejs:/usr/src/app
+      - ./code/node:/usr/src/app
     networks:
       app_net:
         ipv4_address: 172.24.0.11
     ports:
       - 3000:3000
     working_dir: /usr/src/app
-    command: "nodejs /usr/src/app/index.js"
+    command: "nodejs /usr/src/app/server.js"
 
   mongo:
     image: mongo

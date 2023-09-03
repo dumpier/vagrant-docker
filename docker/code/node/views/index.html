@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="description" content="個人事業主の税金計算(自前js版)" />
+    <title>年金・保険・税金の計算</title>
+    <link href="https://dumpier.github.io/pages/res/css/default.css" rel="stylesheet">
+    <script src="https://dumpier.github.io/pages/res/js/my.js"></script>
+    <script src="https://dumpier.github.io/pages/freelance/tax/res/config.js"></script>
+    <script src="https://dumpier.github.io/pages/freelance/tax/res/tax.js"></script>
+</head>
+<body>
+    <div class="loading is-test"><div class="loader"></div></div>
+    <h1>個人事業主の税金計算(自前js版)</h1>
+    <span id="links"></span>
+    <div id="content"><div id="app" class="flex"></div></div>
+</body>
+
+
+<script>
+// myjsの短縮を定義
+const $ = (selector)=>{ return myjs.instance(selector); };
+
+window.onload=()=>{
+    $("#links").html(config.links);
+    $("#content").html(config.template);
+    tax.refresh();
+    $(`input[type="text"].amount, input[type="text"].age, input[type="text"].number`).on("change", function(){ tax.refresh();});
+    $(".loading").hide();
+
+    // test
+    console.log($("#app").find("tr"));
+    console.log($(".loading").css.class.has("test"), $(".loading").css.class.has("is-test"));
+}
+
+</script>
+</html>
