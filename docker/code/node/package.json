@@ -1,0 +1,13 @@
+{
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "start.dev": "nodemon"
+  },
+  "dependencies": {
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

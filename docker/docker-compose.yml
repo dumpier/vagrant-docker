@@ -37,8 +37,8 @@ services:
       - redis
 
   node:
-    image: node:latest
-    # build: ./containers/node
+    # image: node:latest
+    build: ./containers/node
     container_name: node
     tty: true
     environment:
@@ -51,7 +51,7 @@ services:
     ports:
       - 3000:3000
     working_dir: /usr/src/app
-    command: "nodejs /usr/src/app/server.js"
+    # command: "nodejs /usr/src/app/app.js"
 
   mongo:
     image: mongo
