@@ -37,10 +37,9 @@ services:
       - redis
 
   node:
-    # image: node:latest
+    #image: node:latest
     build: ./containers/node
     container_name: node
-    tty: true
     environment:
       - NODE_ENV=development
     volumes:
@@ -50,8 +49,11 @@ services:
         ipv4_address: 172.24.0.11
     ports:
       - 3000:3000
-    working_dir: /usr/src/app
-    # command: "nodejs /usr/src/app/app.js"
+    #working_dir: /usr/src/app
+    tty: true
+    #command: "nodejs /usr/src/app/app.js"
+    #command: "nodemon /usr/src/app/app.js"
+    #command: bash -c "npm install && npm install nodemon -g && nodemon /usr/src/app/app.js"
 
   mongo:
     image: mongo

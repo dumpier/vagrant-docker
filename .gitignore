@@ -8,3 +8,5 @@ vendor
 data*.sql
 
 .DS_Store
+
+node_modules/

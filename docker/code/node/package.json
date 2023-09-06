@@ -1,11 +1,11 @@
 {
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "node app",
     "start.dev": "nodemon"
   },
   "dependencies": {
-    "express": "^4.17.2"
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

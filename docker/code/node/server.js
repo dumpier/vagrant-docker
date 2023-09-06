@@ -1,5 +1,5 @@
 const http = require("http");
-const html = require('fs').readFileSync('views/index.html');
+const html = "hello"; //require('fs').readFileSync('./views/index.html');
 
 const server = http.createServer(function (req, res) {
     res.statusCode = 200;
