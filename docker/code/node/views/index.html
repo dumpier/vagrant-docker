@@ -1,39 +1,71 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<meta name="description" content="個人事業主の税金計算(自前js版)" />
-    <title>年金・保険・税金の計算</title>
-    <link href="https://dumpier.github.io/pages/res/css/default.css" rel="stylesheet">
-    <script src="https://dumpier.github.io/pages/res/js/my.js"></script>
-    <script src="https://dumpier.github.io/pages/freelance/tax/res/config.js"></script>
-    <script src="https://dumpier.github.io/pages/freelance/tax/res/tax.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Chat app</title>
+  <style>
+* {margin:0; padding:0; box-sizing:border-box; }
+#chatSec { width: 100%;height: 100vh;display: flex;align-items: center;background: #fafafa;}
+.chatBlock { width: 100%;max-width: 800px;margin: 0 auto;background: #fff;box-shadow: 0 0 3px 0 rgb(0 0 0 / 12%), 0 2px 3px 0 rgb(0 0 0 / 22%);transition: 0.2s ease-in-out;border-radius: 3px;}
+/* 見出し */
+.chatBlock h1 { background: #6bb6ff;color: #FFF;padding: 10px 25px;border-radius: 3px 3px 0 0;}
+/* チャットの中 */
+ul#timeline { padding: 20px 25px;width: 100%;height: 400px;overflow-y: scroll;flex-direction: column;display: flex;gap: 15px;max-height: 400px;}
+ul#timeline li { list-style: none;display: block;background: #eee;position: relative;padding: 12px 15px;animation: fadeIn 0.7s ease 0s 1 normal;}
+ul#timeline li span { position: relative;line-height: 1.4;display: inline-block;}
+ul#timeline li time { font-size: 0.7rem;position: absolute;right: 8px;bottom: 5px;color: #707070;}
+/* 新規チャット */
+ul#timeline li:last-child { background: #e8f3ff;}
+/* フォーム */
+form#chatSend { display: flex;justify-content: space-between;padding: 20px 25px;background: #ecf6ff;border-radius: 0 0 3px 3px;}
+input#chatText { line-height: 40px;border: solid 1px #eee;background: #FFF;text-indent: 10px;font-size: 1.1rem;display: inline-block;width: calc(100% - 100px);}
+input#chatText:focus-visible { outline-color: #6bb6ff;}
+button#sendButton { width: 90px;border: none;background: #6bb6ff;color: #FFF;letter-spacing: 0.07rem;font-weight: 500;border-radius: 3px;font-size: 1.03rem;}
+/* アニメーション */
+@keyframes fadeIn { 0% {opacity: 0;transform: translateY(30px);} 100% {opacity: 1;} }
+  </style>
 </head>
 <body>
-    <div class="loading is-test"><div class="loader"></div></div>
-    <h1>個人事業主の税金計算(自前js版)</h1>
-    <span id="links"></span>
-    <div id="content"><div id="app" class="flex"></div></div>
-</body>
+<section id="chatSec">
+    <div class="chatBlock">
+        <h1>Chat app</h1>
+        <span>参考：</span><a target="_chatapp" href="https://dubdesign.net/web/nodejs/nodejs-chatapp/#SocketIO-2">https://dubdesign.net/web/nodejs/nodejs-chatapp/#SocketIO-2</a>
+        <ul id="timeline"></ul>
+        <form id="chatSend" action="">
+            <input id="chatText" autocomplete="off"><button id="sendButton">送信</button>
+        </form>
+    </div>
+</section>
 
-
+<script src="/socket.io/socket.io.js"></script>
 <script>
-// myjsの短縮を定義
-const $ = (selector)=>{ return myjs.instance(selector); };
+    let socket = io();
 
-window.onload=()=>{
-    $("#links").html(config.links);
-    $("#content").html(config.template);
-    tax.refresh();
-    $(`input[type="text"].amount, input[type="text"].age, input[type="text"].number`).on("change", function(){ tax.refresh();});
-    $(".loading").hide();
+    const timeline = document.getElementById("timeline");
+    const form = document.getElementById("chatSend");
+    const input = document.getElementById("chatText");
+    const messages = document.getElementById("sendButton");
 
-    // test
-    console.log($("#app").find("tr"));
-    console.log($(".loading").css.class.has("test"), $(".loading").css.class.has("is-test"));
-}
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit("chat message", input.value);
+        input.value = "";
+      }
+    });
 
-</script>
+    socket.on("chat message", function (msg) {
+      // li タグを生成
+      let item = document.createElement("li");
+      // 現在時刻を取得
+      let posttime = new Date().toLocaleString();
+      // メッセージと現在時刻をHTMLに挿入
+      item.innerHTML = '<span>' + msg + '</span><time>' + posttime + '</time>';
+
+      // timelineにliタグを挿入してスクロールも追従
+      timeline.appendChild(item);
+      timeline.scrollTo(0, timeline.scrollHeight);
+    });
+  </script>
+</body>
 </html>

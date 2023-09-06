@@ -1,10 +1,24 @@
-const http = require("http");
-const html = "hello"; //require('fs').readFileSync('./views/index.html');
+// Expressをrequire
+var app = require('express')();
+// httpモジュールをrequire
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-const server = http.createServer(function (req, res) {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/html");
-    res.end(html);
+// ディレクトリでindex.htmlをリク・レス
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
 });
 
-server.listen(3000);
+// Socket.IOをコネクト
+io.on('connection', function(socket){
+  console.log('a user connected');
+  // メッセージ処理
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+});
+
+// ポートを3000番
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+});
