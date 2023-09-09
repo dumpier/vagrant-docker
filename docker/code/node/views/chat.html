@@ -72,7 +72,10 @@ form.addEventListener("submit", function (e) {
   }
 });
 
+// ユーザー一覧
 socket.on("chat user", function (users) {
+  console.log("users", users);
+  onlines.innerHTML = "";
   users.forEach((user)=>{
     let item = document.createElement("li");
     item.innerHTML = `<span>${user}</time>`;
@@ -82,7 +85,7 @@ socket.on("chat user", function (users) {
 
 socket.on("chat message", function (input) {
   let datas = myjs.type(input)==="Array" ? input : [input];
-  console.log(datas);
+  console.log("messages", datas);
   datas.forEach((data)=>{
     let item = document.createElement("li");
     item.innerHTML = `<span>${data.msg}</span><time>${data.time}</time>`;
