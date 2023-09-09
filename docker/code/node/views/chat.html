@@ -73,12 +73,11 @@ form.addEventListener("submit", function (e) {
 });
 
 socket.on("chat message", function (input) {
-  let msgs = myjs.type(input)==="Array" ? input : [input];
-  console.log(msgs);
-  msgs.forEach((msg)=>{
+  let datas = myjs.type(input)==="Array" ? input : [input];
+  console.log(datas);
+  datas.forEach((data)=>{
     let item = document.createElement("li");
-    let posttime = new Date().toLocaleString();
-    item.innerHTML = `<span>${msg}</span><time>${posttime}</time>`;
+    item.innerHTML = `<span>${data.msg}</span><time>${data.time}</time>`;
     timeline.appendChild(item);
     timeline.scrollTo(0, timeline.scrollHeight);
   });

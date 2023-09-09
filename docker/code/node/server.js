@@ -23,9 +23,10 @@ io.on('connection', function(socket){
 
   socket.on('chat message', function(msg){
     console.log('# message', msg);
+    const data = { msg:msg, time:new Date().toLocaleString('sv') };
 
-    messages.push(msg);
-    io.emit('chat message', msg);
+    messages.push(data);
+    io.emit('chat message', data);
   });
 });
 
