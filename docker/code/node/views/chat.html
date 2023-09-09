@@ -3,6 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Chat app</title>
+  <script src="https://dumpier.github.io/pages/res/js/my.js"></script>
   <style>
 * {margin:0; padding:0; box-sizing:border-box; }
 #foot { max-width: 800px; margin:0 auto; display: flex; align-items: center; }
@@ -71,17 +72,16 @@ form.addEventListener("submit", function (e) {
   }
 });
 
-socket.on("chat message", function (msg) {
-  // li タグを生成
-  let item = document.createElement("li");
-  // 現在時刻を取得
-  let posttime = new Date().toLocaleString();
-  // メッセージと現在時刻をHTMLに挿入
-  item.innerHTML = '<span>' + msg + '</span><time>' + posttime + '</time>';
-
-  // timelineにliタグを挿入してスクロールも追従
-  timeline.appendChild(item);
-  timeline.scrollTo(0, timeline.scrollHeight);
+socket.on("chat message", function (input) {
+  let msgs = myjs.type(input)==="Array" ? input : [input];
+  console.log(msgs);
+  msgs.forEach((msg)=>{
+    let item = document.createElement("li");
+    let posttime = new Date().toLocaleString();
+    item.innerHTML = `<span>${msg}</span><time>${posttime}</time>`;
+    timeline.appendChild(item);
+    timeline.scrollTo(0, timeline.scrollHeight);
+  });
 });
 </script>
 

@@ -7,16 +7,24 @@ const io = require('socket.io')(http);
 
 // app.use("/", require(__dirname + '/routes/index'));
 // app.use("/chat", require(__dirname + '/routes/chat'));
+// app.use("/test", require(__dirname + '/routes/index'));
+
+const messages = [];
 
 app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, '/views/chat.html'));
 });
 
 io.on('connection', function(socket){
-  console.log('a user connected');
+  console.log(`a user(${socket.id}) connected.`);
+  if (messages.length) {
+    io.to(socket.id).emit('chat message', messages);
+  }
 
-  // メッセージ処理
   socket.on('chat message', function(msg){
+    console.log('# message', msg);
+
+    messages.push(msg);
     io.emit('chat message', msg);
   });
 });
