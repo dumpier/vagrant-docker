@@ -1,0 +1,24 @@
+* {margin:0; padding:0; box-sizing:border-box; }
+#foot { max-width: 800px; margin:0 auto; display: flex; align-items: center; }
+#chat-section { width: 100%;height: 100vh;display: flex;align-items: center;background: #fafafa;}
+.chat-block { width: 100%;max-width: 700px;margin: 0 auto;background: #fff;box-shadow: 0 0 3px 0 rgb(0 0 0 / 12%), 0 2px 3px 0 rgb(0 0 0 / 22%);transition: 0.2s ease-in-out;border-radius: 3px;}
+/* 見出し */
+.chat-block .title { background: #6bb6ff;color: #FFF;padding: 10px 25px;border-radius: 3px 3px 0 0; display: flex; justify-content: space-between;}
+.chat-block .title .col { vertical-align: middle; }
+/* チャットの中 */
+ul.chat-data { padding: 15px; width: 100%;height: 400px; flex-direction: column; display: flex;gap: 15px;max-height: 400px;}
+ul.chat-data li { list-style: none;display: block;background: #eee;position: relative;padding: 12px 15px;animation: fadeIn 0.7s ease 0s 1 normal;}
+ul.chat-data li span { position: relative;line-height: 1.4;display: inline-block;}
+ul.chat-data#online li { padding:5px; }
+ul.chat-data#online li span { font-size:9pt; }
+ul.chat-data li time { font-size: 0.7rem;position: absolute;right: 8px;bottom: 5px;color: #707070;}
+/* 新規チャット */
+ul.chat-data li:last-child { background: #e8f3ff;}
+/* フォーム */
+form#chat-send { display: flex;justify-content: space-between;padding: 20px 25px;background: #ecf6ff;border-radius: 0 0 3px 3px;}
+input#chat-text { line-height: 40px;border: solid 1px #eee;background: #FFF;text-indent: 10px;font-size: 1.1rem;display: inline-block;width: calc(100% - 100px);}
+input#chat-text:focus-visible { outline-color: #6bb6ff;}
+button#sendButton { width: 90px; border: none;background: #6bb6ff;color: #FFF;letter-spacing: 0.07rem;font-weight: 500;border-radius: 3px;font-size: 1.03rem;}
+select { margin: 6px 0px; border: none; letter-spacing: 0.07rem;font-weight: 500;border-radius: 5px;font-size: 1.03rem; }
+/* アニメーション */
+@keyframes fadeIn { 0% {opacity: 0;transform: translateY(30px);} 100% {opacity: 1;} }

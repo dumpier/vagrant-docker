@@ -17,6 +17,7 @@ const ChatRoom = {
           data.users.push(socket.id);
           io.emit('chat user', data.users);
         }
+
         if (data.msgs.length) {
           io.to(socket.id).emit('chat message', data.msgs);
         }
@@ -33,10 +34,10 @@ const ChatRoom = {
     },
 
     onDisconnect(io, socket, data){
-    socket.on("disconnect",()=>{
-        console.log("A user(${socket.id}) disconnect.");
-        data.users = data.users.filter((user)=>{ return user!=socket.id });
-        io.emit('chat user', data.users);
+        socket.on("disconnect",()=>{
+            console.log("A user(${socket.id}) disconnect.");
+            data.users = data.users.filter((user)=>{ return user!=socket.id });
+            io.emit('chat user', data.users);
         });
     },
 }
