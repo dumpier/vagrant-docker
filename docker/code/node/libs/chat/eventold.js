@@ -1,26 +1,26 @@
 const ChatEvent = {
     instance() { return Object.create(ChatEvent); },
 
-    handle(io, socket, storage){
-        this.onConnect(io, socket, storage);
-        this.onJoin(io, socket, storage);
-        this.onMessage(io, socket, storage);
-        this.onDisconnect(io, socket, storage);
+    handle(io, socket, data){
+        this.onConnect(io, socket, data);
+        this.onJoin(io, socket, data);
+        this.onMessage(io, socket, data);
+        this.onDisconnect(io, socket, data);
     },
 
-    onConnect(io, socket, storage){
+    onConnect(io, socket, data){
         console.log(`A user(${socket.id}) connected.`);
-        if (!storage.users.includes(socket.id)) {
-            storage.users.push(socket.id);
-            io.emit('chat user', storage.users);
+        if (!data.users.includes(socket.id)) {
+          data.users.push(socket.id);
+          io.emit('chat user', data.users);
         }
 
-        if (storage.msgs.length) {
-          io.to(socket.id).emit('chat message', storage.msgs);
+        if (data.msgs.length) {
+          io.to(socket.id).emit('chat message', data.msgs);
         }
     },
 
-    onJoin(io, socket, storage){
+    onJoin(io, socket, data){
         socket.on('join', (data)=>{
             usrobj = {
               'room': msg.roomid,
@@ -31,21 +31,21 @@ const ChatEvent = {
         });
     },
 
-    onMessage(io, socket, storage){
+    onMessage(io, socket, data){
         socket.on('chat message', (msg)=>{
             console.log('# Message', msg);
             const chat = { id: socket.id, msg:msg, time:new Date().toLocaleString('sv'), };
 
-            storage.msgs.push(chat);
+            data.msgs.push(chat);
             io.emit('chat message', chat);
         });
     },
 
-    onDisconnect(io, socket, storage){
+    onDisconnect(io, socket, data){
         socket.on("disconnect",()=>{
             console.log("A user(${socket.id}) disconnect.");
-            storage.users = storage.users.filter((user)=>{ return user!=socket.id });
-            io.emit('chat user', storage.users);
+            data.users = data.users.filter((user)=>{ return user!=socket.id });
+            io.emit('chat user', data.users);
         });
     },
 }

@@ -14,9 +14,9 @@ app.use("/chat", require(__dirname + '/routes/chat'));
 
 // socket.io
 const data = {users:[], msgs:[]};
-
-const storage = require('./libs/chat/storage').instance();
+// const storage = require('./libs/chat/storage').instance();
 io.on('connection', (socket)=>{
+  // require('./libs/chat/eventold').instance().handle(io, socket, data);
   require('./libs/chat/event').instance().handle(io, socket, data);
 });
 

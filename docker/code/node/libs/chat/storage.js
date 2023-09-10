@@ -1,5 +1,4 @@
 const ChatStorage = {
-    users:{},
     rooms:{},
     msgs:{},
 
@@ -11,17 +10,28 @@ const ChatStorage = {
 
     getRoom(roomid){ return this.rooms[roomid]; },
 
-    getUsers(roomid){ return this },
-    addUser(roomid, userid){},
+    getUsers(roomid){ return this.getRoom(roomid).users; },
+    addUser(roomid, userid){
+        // 他のroomから削除
+        Object.keys(this.rooms).forEach((room)=>{ room.users.filter((user)=>{ return user!=userid }); });
+        // 指定roomに追加
+        this.rooms[roomid].users.push(userid);
 
-    getMessages(roomid){ return this },
-    addMessage(roomid, userid, msg){},
+        return this;
+    },
+
+    getMessages(roomid){ return this.getRoom(roomid).msgs; },
+    addMessage(roomid, userid, msg){
+        const obj = Message.instance(roomid, userid, msg);
+        this.getRoom(roomid).push(obj);
+        return this;
+    },
 }
 
 const Room = {
-    id:0,
-    msgs:[],
-    users:[],
+    id: 1,
+    msgs: [],
+    users: [],
     instance(roomid){
         const obj = Object.create(Room);
         obj.id = roomid;
@@ -29,27 +39,16 @@ const Room = {
     },
 }
 
-const User = {
-    id:0,
-    roomid:0,
-    msgs:[],
-    instance(userid, roomid){
-        const obj = Object.create(User);
-        obj.roomid = roomid;
-        return obj;
-    },
-}
-
 const Message = {
-    roomid:0,
-    userid:0,
+    roomid: 1,
+    userid: "",
     msg:"",
     time:null,
     instance(roomid, userid, msg){
         const obj = Object.create(Message);
         obj.roomid = roomid;
-        obj.roomid = userid;
-        obj.roomid = msg;
+        obj.userid = userid;
+        obj.msg = msg;
         obj.time = new Date().toLocaleString('sv');
         return obj;
     },
