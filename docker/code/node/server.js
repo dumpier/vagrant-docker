@@ -9,9 +9,10 @@ app.use("/", require(__dirname + '/routes/index'));
 app.use("/chat", require(__dirname + '/routes/chat'));
 
 
+// socket.io
 const data = { users:[], msgs:[],};
 io.on('connection', (socket)=>{
-  const ChatRoom = require('./libs/chat_room');
+  const ChatRoom = require('./libs/chatroom');
   ChatRoom.instance().handle(io, socket, data);
 });
 
