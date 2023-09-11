@@ -1,29 +1,34 @@
 const ChatStorage = {
-    rooms:{},
-    msgs:{},
-
+    data:{rooms:{}},
     instance(){
         const obj = Object.create(ChatStorage);
-        [1,2,3,4,5].forEach((roomid)=>{ obj.rooms[roomid] = Room.instance(roomid); });
+        // 最初から５つのルームを用意
+        [1,2,3,4,5].forEach((roomid)=>{ obj.data.rooms[roomid] = Room.instance(roomid); });
         return obj;
     },
 
-    getRoom(roomid){ return this.rooms[roomid]; },
+    rooms(roomid){ return roomid==undefined ? this.data.rooms : this.data.rooms[roomid]; },
+    room(roomid){ return this.rooms(roomid); },
 
-    getUsers(roomid){ return this.getRoom(roomid).users; },
+    users(roomid, users){
+        if (users==undefined) { return this.room(roomid).users; }
+        this.room(roomid).users = users;
+        return this;
+    },
     addUser(roomid, userid){
         // 他のroomから削除
-        Object.keys(this.rooms).forEach((room)=>{ room.users.filter((user)=>{ return user!=userid }); });
+        const rooms = this.rooms();
+        Object.keys(rooms).forEach((id)=>{ rooms[id].users.filter((user)=>{ return user!=userid });
+        });
         // 指定roomに追加
-        this.rooms[roomid].users.push(userid);
-
+        this.room(roomid).users.push(userid);
         return this;
     },
 
-    getMessages(roomid){ return this.getRoom(roomid).msgs; },
-    addMessage(roomid, userid, msg){
+    msgs(roomid){ return this.room(roomid).msgs; },
+    addMsg(roomid, userid, msg){
         const obj = Message.instance(roomid, userid, msg);
-        this.getRoom(roomid).push(obj);
+        this.room(roomid).msgs.push(obj);
         return this;
     },
 }
@@ -46,10 +51,7 @@ const Message = {
     time:null,
     instance(roomid, userid, msg){
         const obj = Object.create(Message);
-        obj.roomid = roomid;
-        obj.userid = userid;
-        obj.msg = msg;
-        obj.time = new Date().toLocaleString('sv');
+        [obj.roomid, obj.userid, obj.msg, obj.time] = [roomid, userid, msg, new Date().toLocaleString('sv')];
         return obj;
     },
 }

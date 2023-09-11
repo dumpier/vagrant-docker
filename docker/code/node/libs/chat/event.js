@@ -1,6 +1,5 @@
 const ChatEvent = {
     instance() { return Object.create(ChatEvent); },
-
     handle(io, socket, storage){
         this.onConnect(io, socket, storage);
         this.onJoin(io, socket, storage);
@@ -9,18 +8,20 @@ const ChatEvent = {
     },
 
     onConnect(io, socket, storage){
-        console.log(`A user(${socket.id}) connected.`);
-        if (!storage.users.includes(socket.id)) {
-            storage.users.push(socket.id);
-            io.emit('chat user', storage.users);
+        const [roomid, userid] = [1, socket.id];
+        console.log(`A user(${userid}) connected room #${roomid}.`);
+        if (!storage.users(roomid).includes(userid)) {
+            storage.addUser(roomid, userid);
+            io.emit('chat user', storage.users(roomid));
         }
 
-        if (storage.msgs.length) {
-          io.to(socket.id).emit('chat message', storage.msgs);
+        if (storage.msgs(roomid).length) {
+          io.to(userid).emit('chat message', storage.msgs(roomid));
         }
     },
 
     onJoin(io, socket, storage){
+        const [roomid, userid] = [1, socket.id];
         socket.on('join', (data)=>{
             usrobj = {
               'room': msg.roomid,
@@ -32,20 +33,22 @@ const ChatEvent = {
     },
 
     onMessage(io, socket, storage){
+        const [roomid, userid] = [1, socket.id];
         socket.on('chat message', (msg)=>{
             console.log('# Message', msg);
-            const chat = { id: socket.id, msg:msg, time:new Date().toLocaleString('sv'), };
+            const chat = { id: userid, msg:msg, time:new Date().toLocaleString('sv'), };
 
-            storage.msgs.push(chat);
+            storage.addMsg(roomid, userid, chat);
             io.emit('chat message', chat);
         });
     },
 
     onDisconnect(io, socket, storage){
+        const [roomid, userid] = [1, socket.id];
         socket.on("disconnect",()=>{
-            console.log("A user(${socket.id}) disconnect.");
-            storage.users = storage.users.filter((user)=>{ return user!=socket.id });
-            io.emit('chat user', storage.users);
+            console.log("A user(${userid}) disconnect.");
+            storage.users(roomid, storage.users(roomid).filter((user)=>{ return user!=userid; }));
+            io.emit('chat user', storage.users(roomid));
         });
     },
 }
