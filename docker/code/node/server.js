@@ -3,20 +3,23 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+// ディレクトリ定義
+const dir = {
+  root(sub){ sub=sub??""; return `${__dirname}/${sub}`; },
+  libs(sub){ sub=sub??""; return this.root(`libs/${sub}`); },
+  views(sub){ sub=sub??""; return this.views(`libs/${sub}`); },
+  routes(sub){ sub=sub??""; return this.root(`routes/${sub}`); },
+};
 
-// TODO 動的ルーティングにする
-// publicフォルダの静的リソース
-app.use(express.static('public'));
-app.use("/", require(__dirname + '/routes/index'));
-app.use("/chat", require(__dirname + '/routes/chat'));
-// require("./libs/router").instance().dispatch();
+// ルーティング処理
+require("./libs/router").instance().dispatch(express, app, dir);
 
 
-// socket.io
+// チャット関連(socket.io)
 const storage = require('./libs/chat/storage').instance();
 io.on('connection', (socket)=>{
   require('./libs/chat/event').instance().handle(io, socket, storage);
 });
 
-http.listen(3000, ()=>{ console.log('listening on *:3000'); });
 
+http.listen(3000, ()=>{ console.log('listening on *:3000'); });

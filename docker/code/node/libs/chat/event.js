@@ -1,5 +1,6 @@
 const ChatEvent = {
     instance() { return Object.create(ChatEvent); },
+
     handle(io, socket, storage){
         this.onConnect(io, socket, storage);
         this.onJoin(io, socket, storage);

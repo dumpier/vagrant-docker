@@ -1,5 +1,5 @@
 const ChatStorage = {
-    data:{rooms:{}},
+    data:{ rooms:{} },
     instance(){
         const obj = Object.create(ChatStorage);
         // 最初から５つのルームを用意
@@ -18,8 +18,7 @@ const ChatStorage = {
     addUser(roomid, userid){
         // 他のroomから削除
         const rooms = this.rooms();
-        Object.keys(rooms).forEach((id)=>{ rooms[id].users.filter((user)=>{ return user!=userid });
-        });
+        Object.keys(rooms).forEach((id)=>{ rooms[id].users.filter((user)=>{ return user!=userid }); });
         // 指定roomに追加
         this.room(roomid).users.push(userid);
         return this;
