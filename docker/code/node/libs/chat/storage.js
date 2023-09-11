@@ -29,7 +29,7 @@ const ChatStorage = {
     addMsg(roomid, userid, msg){
         const obj = Message.instance(roomid, userid, msg);
         this.room(roomid).msgs.push(obj);
-        return this;
+        return obj;
     },
 }
 

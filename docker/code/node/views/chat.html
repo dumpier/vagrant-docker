@@ -64,7 +64,7 @@ socket.on("chat message", function (input) {
   console.log("messages", datas);
   datas.forEach((data)=>{
     let item = document.createElement("li");
-    item.innerHTML = `<span>${data.msg}</span><time><u>${data.id.slice(0,5)}</u> ${data.time}</time>`;
+    item.innerHTML = `<span>${data.msg}</span><time><u>${data.userid.slice(0,5)}</u> ${data.time}</time>`;
     timeline.appendChild(item);
     timeline.scrollTo(0, timeline.scrollHeight);
   });

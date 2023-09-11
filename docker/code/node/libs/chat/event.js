@@ -36,10 +36,9 @@ const ChatEvent = {
         const [roomid, userid] = [1, socket.id];
         socket.on('chat message', (msg)=>{
             console.log('# Message', msg);
-            const chat = { id: userid, msg:msg, time:new Date().toLocaleString('sv'), };
-
-            storage.addMsg(roomid, userid, chat);
-            io.emit('chat message', chat);
+            const data = storage.addMsg(roomid, userid, msg);
+            console.log("chat data", data);
+            io.emit('chat message', data);
         });
     },
 
