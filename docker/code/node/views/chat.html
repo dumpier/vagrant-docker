@@ -12,7 +12,7 @@
       <div class="title">
         <div class="col"><h1>Chat app</h1></div>
         <div class="col">
-          <select id="rooms"><option value="1">Room#1</option><option value="2">Room#2</option><option value="3">Room#3</option><option value="4">Room#4</option><option value="5">Room#5</option></select>
+          <select id="room"><option value="1">Room#1</option><option value="2">Room#2</option><option value="3">Room#3</option><option value="4">Room#4</option><option value="5">Room#5</option></select>
         </div>
       </div>
 
@@ -36,39 +36,60 @@ let socket = io();
 
 const timeline = document.getElementById("timeline");
 const online = document.getElementById("online");
+const room = document.getElementById("room");
 const form = document.getElementById("chat-send");
 const input = document.getElementById("chat-text");
 const messages = document.getElementById("sendButton");
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  if (input.value) {
+
+// メッセージの送信
+form.addEventListener("submit", function (ev) { chat.send(ev); });
+// ルームの変更
+room.addEventListener("change", function (ev) { chat.room(ev); });
+// ユーザーの入室退室があった際
+socket.on("chat user", function (users) { chat.onUsers(users); });
+// メッセージの受信
+socket.on("chat message", function (input) { chat.onMessage(input); });
+
+
+var chat = chat || {
+  // 自分がメッセージを送る際
+  send(ev){
+    ev.preventDefault();
+    if (!input.value) { return false; }
     socket.emit("chat message", input.value);
     input.value = "";
-  }
-});
+  },
 
-// ユーザー一覧
-socket.on("chat user", function (users) {
-  console.log("users", users);
-  online.innerHTML = "";
-  users.forEach((user)=>{
-    let item = document.createElement("li");
-    item.innerHTML = `<span>${user}</time>`;
-    online.appendChild(item);
-  });
-});
+  // 自分がルームを変更した際
+  room(ev){
+    ev.preventDefault();
+    socket.emit('join', { roomid: ev.target.value,});
+  },
 
-socket.on("chat message", function (input) {
-  let datas = myjs.type(input)==="Array" ? input : [input];
-  console.log("messages", datas);
-  datas.forEach((data)=>{
-    let item = document.createElement("li");
-    item.innerHTML = `<span>${data.msg}</span><time><u>${data.userid.slice(0,5)}</u> ${data.time}</time>`;
-    timeline.appendChild(item);
-    timeline.scrollTo(0, timeline.scrollHeight);
-  });
-});
+
+  // 他のユーザーが入室退室した際
+  onUsers(users){
+    online.innerHTML = "";
+    users.forEach((user)=>{
+      let item = document.createElement("li");
+      item.innerHTML = `<span>${user}</time>`;
+      online.appendChild(item);
+    });
+
+  },
+
+  // メッセージを送った際
+  onMessage(input){
+    let datas = myjs.type(input)==="Array" ? input : [input];
+    datas.forEach((data)=>{
+      let item = document.createElement("li");
+      item.innerHTML = `<span>${data.msg}</span><time><u>${data.userid.slice(0,5)}</u> ${data.time}</time>`;
+      timeline.appendChild(item);
+      timeline.scrollTo(0, timeline.scrollHeight);
+    });
+  },
+}
 </script>
 
 </body>
