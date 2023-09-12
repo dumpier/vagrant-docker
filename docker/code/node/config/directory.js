@@ -1,5 +1,5 @@
 // ディレクトリ定義
-Dir = {
+module.exports = {
   rootdir:null,
   instance(root){ this.rootdir = root; return this; },
   root(sub){ sub=sub??""; return `${this.rootdir}/${sub}`; },
@@ -8,5 +8,3 @@ Dir = {
   views(sub){ sub=sub??""; return this.root(`views/${sub}`); },
   routes(sub){ sub=sub??""; return this.root(`routes/${sub}`); },
 };
-
-module.exports = Dir;

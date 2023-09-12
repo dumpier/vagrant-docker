@@ -6,7 +6,7 @@ global.http = require('http').Server(app);
 process.on('uncaughtException', (err)=>{ console.log(err); });
 
 // フォルダ定義
-global.dir = require("./config/global").instance(__dirname);
+global.dir = require("./config/directory").instance(__dirname);
 
 // ルーティング処理
 require("./libs/router").instance().dispatch();

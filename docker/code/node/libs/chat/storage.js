@@ -8,13 +8,7 @@ const ChatStorage = {
 }
 
 ChatStorage.user = {
-  roomid(userid) {
-    console.log("[USERS]", Data.users);
-    const roomid = Data.users[userid] ?? 1;
-    console.log("[USERS]", roomid, Data.users);
-    return roomid;
-  },
-  has(userid, roomid){ return this.roomid(userid)==roomid; },
+  roomid(userid) { return Data.users[userid] ?? 1; },
   all(roomid){ return Object.keys(Data.rooms[roomid].users); },
   add(userid, roomid){ return this.change(userid, roomid ?? 1); },
   leave(userid){
@@ -37,7 +31,7 @@ ChatStorage.user = {
 
 ChatStorage.message = {
   all(roomid){ return Data.rooms[roomid].msgs; },
-  add(roomid, userid, msg){ const obj = Message.instance(roomid, userid, msg); Data.rooms[roomid].msgs.push(obj); return obj; },
+  add(roomid, userid, msg){ const obj = Message.instance(roomid, userid, msg); Data.rooms[roomid].msgs.push(obj); console.log(obj); return obj; },
 }
 
 const Data = {

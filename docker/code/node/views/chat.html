@@ -32,20 +32,6 @@
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script> -->
 
 <script>
-window.onload=()=>{
-  // 最初はデフォルトでRoom#1に入る
-  chat.join(1);
-
-  // メッセージの送信処理
-  form.addEventListener("submit", function (ev) { chat.send(ev); });
-  // ルーム変更時の処理
-  room.addEventListener("change", function (ev) { chat.join(ev.target.value); });
-  // 他のユーザーの入室退室があった際
-  socket.on("chat user", function (users) { chat.onUsers(users); });
-  // メッセージの受信
-  socket.on("chat message", function (input) { chat.onMessage(input); });
-}
-
 const socket = io();
 const timeline = document.getElementById("timeline");
 const online = document.getElementById("online");
@@ -87,6 +73,23 @@ var chat = chat || {
     });
   },
 }
+
+window.onload=()=>{
+  console.log(`#socket`, socket);
+
+  // 最初はデフォルトでRoom#1に入る
+  chat.join(1);
+
+  // メッセージの送信処理
+  form.addEventListener("submit", function (ev) { chat.send(ev); });
+  // ルーム変更時の処理
+  room.addEventListener("change", function (ev) { chat.join(ev.target.value); });
+  // 他のユーザーの入室退室があった際
+  socket.on("chat user", function (users) { chat.onUsers(users); });
+  // メッセージの受信
+  socket.on("chat message", function (input) { chat.onMessage(input); });
+}
+
 </script>
 
 </body>

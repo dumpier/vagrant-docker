@@ -28,8 +28,8 @@ const ChatEvent = {
 
     socket.on('chat message', (msg)=>{
       let [userid, roomid] = this.parameter();
+      console.log(`# message[userid:${userid}][roomid:${roomid}]`, msg);
 
-      console.log('# message', msg);
       const data = storage.message.add(roomid, userid, msg);
       io.to(roomid).emit('chat message', data);
     });
@@ -40,7 +40,6 @@ const ChatEvent = {
 
     socket.on('join', (data)=>{
       let [userid, roomid] = this.parameter();
-
       console.log(`# ${userid} join. [enter:${data.roomid}][leave:${roomid}]`);
 
       storage.user.change(userid, data.roomid);
@@ -61,8 +60,8 @@ const ChatEvent = {
 
     socket.on("disconnect",()=>{
       let [userid, roomid] = this.parameter();
-
       console.log(`# a user disconnected. [roomid:${storage.user.roomid(userid)}][userid:${userid}]`);
+
       storage.user.leave(userid);
       io.to(roomid).emit('chat user', storage.user.all(roomid));
     });
