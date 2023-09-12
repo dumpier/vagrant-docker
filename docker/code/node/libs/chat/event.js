@@ -1,10 +1,7 @@
 const io = require('socket.io')(http);
 const storage = require('./storage').instance();
 
-io.on('connection', (socket)=>{
-  ChatEvent.instance(socket).handle();
-});
-
+io.on('connection', (socket)=>{ ChatEvent.instance(socket).handle(); });
 
 const ChatEvent = {
   ref:{ socket: null, },
@@ -24,8 +21,8 @@ const ChatEvent = {
 
   onConnect(){
     let [socket, roomid, userid] = this.parameter();
-
     console.log(`A user(${userid}) connected room #${roomid}.`);
+
     if (!storage.users(roomid).includes(userid)) {
       storage.addUser(roomid, userid);
       io.to(roomid).emit('chat user', storage.users(roomid));
