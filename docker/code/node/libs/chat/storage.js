@@ -4,16 +4,6 @@ const ChatStorage = {
     Data.init();
     return obj;
   },
-
-  log(){
-    console.log("============== users ==============");
-    console.log(Data.users);
-    console.log("============== room.msgs ==============");
-    Object.keys(Data.rooms).forEach((id)=>{ console.log(id, Data.rooms[id].msgs); });
-    console.log("============== room.users ==============");
-    Object.keys(Data.rooms).forEach((id)=>{ console.log(id, Data.rooms[id].users); });
-    console.log("-------------- user --------------");
-  },
 }
 
 ChatStorage.user = {
@@ -28,6 +18,7 @@ ChatStorage.user = {
   },
   enter(userid, roomid){ return this.change(userid, roomid); },
   change(userid, roomid){
+    console.log("user.change", userid, roomid);
     const roomid_old = Data.users[userid];
     if (roomid_old) {
       delete Data.rooms[roomid_old].users[userid];
@@ -40,7 +31,7 @@ ChatStorage.user = {
 
 ChatStorage.message = {
   all(roomid){ return Data.rooms[roomid].msgs; },
-  add(roomid, userid, msg){ const obj = Message.instance(roomid, userid, msg); Data.rooms[roomid].msgs.push(obj); return obj; },
+  add(roomid, userid, msg){ console.log("message.add", userid, roomid, msg);const obj = Message.instance(roomid, userid, msg); Data.rooms[roomid].msgs.push(obj); return obj; },
 }
 
 const Data = {
@@ -50,8 +41,8 @@ const Data = {
 }
 
 const Room = {
-  id: 1, msgs: [], users: {},
-  instance(id){ const obj = Object.create(Room); obj.id = id; return obj; },
+  id: null, msgs: null, users: null,
+  instance(id){ const obj = Object.create(Room); [obj.id, obj.msgs, obj.users] = [id, [], {}]; return obj; },
 }
 
 const Message = {
