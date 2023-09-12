@@ -5,13 +5,7 @@ io.on('connection', (socket)=>{ ChatEvent.instance(socket).handle(); });
 
 const ChatEvent = {
   ref:{ socket: null, },
-
-  instance(socket) {
-    const obj = Object.create(ChatEvent);
-    [obj.ref.socket] = [socket];
-    return obj;
-  },
-
+  instance(socket) { const obj=Object.create(ChatEvent); [obj.ref.socket]=[socket]; return obj; },
   handle(){
     this.onConnect();
     this.onJoin();
@@ -21,31 +15,34 @@ const ChatEvent = {
 
   onConnect(){
     let [socket, roomid, userid] = this.parameter();
-    console.log(`A user(${userid}) connected room #${roomid}.`);
+    console.log(`# a user connected. [roomid:${roomid}][userid:${userid}]`);
 
-    if (!storage.users(roomid).includes(userid)) {
-      storage.addUser(roomid, userid);
-      io.to(roomid).emit('chat user', storage.users(roomid));
-    }
+    storage.user.add(userid, roomid);
+    // io.emit('chat user', storage.user.all(roomid));
+    io.to(roomid).emit('join', storage.user.all(roomid));
+    io.to(roomid).emit('chat user', storage.user.all(roomid));
 
     // 過去のメッセージを全部送る
-    if (storage.msgs(roomid).length) {
-      io.to(userid).emit('chat message', storage.msgs(roomid));
-    }
+    io.to(userid).emit('chat message', storage.message.all(roomid));
   },
 
   onJoin(){
     let [socket, roomid, userid] = this.parameter();
 
     socket.on('join', (data)=>{
-      console.log(`${userid} join #${data.roomid}, leave #${roomid}`, data, storage.data);
+      console.log(`# ${userid} join. [roomid:#${data.roomid}, leave #${roomid}`);
 
-      storage.addUser(data.roomid, userid); // ユーザー一覧の更新
-      io.to(data.roomid).emit('chat user', storage.users(data.roomid)); // 入室したルームのユーザー一覧を更新
+      // 部屋変更処理
+      storage.user.change(userid, data.roomid);
+      // io.to(data.roomid).emit('chat user', storage.user.all(data.roomid));
       socket.join(data.roomid);
+      io.sockets.in(data.roomid).emit('chat user', storage.user.all(data.roomid));
+
       if (roomid != data.roomid) {
-        io.to(roomid).emit('chat user', storage.users(roomid)); // 退室したルームのユーザー一覧を更新
+        // 退室したルームのユーザー一覧を更新
+        // io.to(roomid).emit('chat user', storage.user.all(roomid));
         socket.leave(roomid);
+        io.sockets.in(data.roomid).emit('chat user', storage.user.all(roomid));
       }
     });
   },
@@ -54,9 +51,8 @@ const ChatEvent = {
     let [socket, roomid, userid] = this.parameter();
 
     socket.on('chat message', (msg)=>{
-      console.log('# Message', msg);
-      const data = storage.addMsg(roomid, userid, msg);
-      console.log("chat data", data);
+      console.log('# message', msg);
+      const data = storage.message.add(roomid, userid, msg);
       io.to(roomid).emit('chat message', data);
     });
   },
@@ -65,16 +61,16 @@ const ChatEvent = {
     let [socket, roomid, userid] = this.parameter();
 
     socket.on("disconnect",()=>{
-      console.log(`A user(${userid}) disconnect.`);
-      storage.users(roomid, storage.users(roomid).filter((user)=>{ return user!=userid; }));
-      io.to(roomid).emit('chat user', storage.users(roomid));
+      console.log(`# a user disconnected. [roomid:${storage.user.roomid(userid)}][userid:${userid}]`);
+      storage.user.leave(userid);
+      io.to(roomid).emit('chat user', storage.user.all(roomid));
     });
   },
 
   parameter() {
     return [
       this.ref.socket,
-      storage.roomid(this.ref.socket.id),
+      storage.user.roomid(this.ref.socket.id),
       this.ref.socket.id,
     ];
   },
