@@ -26,8 +26,10 @@
     </div>
 </section>
 <div id="foot">
-  <span>参考：</span><a target="_chatapp" href="https://dubdesign.net/web/nodejs/nodejs-chatapp/#SocketIO-2">https://dubdesign.net/web/nodejs/nodejs-chatapp/#SocketIO-2</a>
+  <span>参考サイト</span><a target="_chatapp" href="https://dubdesign.net/web/nodejs/nodejs-chatapp/#SocketIO-2">https://dubdesign.net/web/nodejs/nodejs-chatapp/#SocketIO-2</a>
 </div>
+
+
 <script src="/socket.io/socket.io.js"></script>
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script> -->
 
@@ -75,11 +77,9 @@ var chat = chat || {
 }
 
 window.onload=()=>{
-  console.log(`#socket`, socket);
-
+  console.info(`#socket`, socket);
   // 最初はデフォルトでRoom#1に入る
   chat.join(1);
-
   // メッセージの送信処理
   form.addEventListener("submit", function (ev) { chat.send(ev); });
   // ルーム変更時の処理
@@ -89,8 +89,6 @@ window.onload=()=>{
   // メッセージの受信
   socket.on("chat message", function (input) { chat.onMessage(input); });
 }
-
 </script>
-
 </body>
 </html>

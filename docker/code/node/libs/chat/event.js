@@ -54,6 +54,7 @@ const ChatEvent = {
       const [userid, roomid] = [socket.id, storage.user.roomid(socket.id)];
       console.log(`# a user disconnected. [roomid:${storage.user.roomid(userid)}][userid:${userid}]`);
 
+      socket.leave(roomid);
       storage.user.leave(userid);
       io.to(roomid).emit('chat user', storage.user.all(roomid));
     });
