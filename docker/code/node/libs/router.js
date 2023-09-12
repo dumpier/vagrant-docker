@@ -2,7 +2,7 @@ const Router = {
   instance(){ return Object.create(Router); },
 
   // TODO 動的ルーティングにする
-  dispatch(express, app, dir){
+  dispatch(){
     // publicフォルダの静的リソース
     app.use(express.static('public'));
     app.use("/", require(dir.routes(`index`)));

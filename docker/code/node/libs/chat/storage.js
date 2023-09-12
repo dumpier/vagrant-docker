@@ -30,7 +30,6 @@ const ChatStorage = {
 
   addUser(roomid, userid){
     // 他のroomから削除
-    const rooms = this.rooms();
     for(const i in this.rooms()) {
       this.data.rooms[i].users = this.rooms(i).users.filter((user)=>{ return user!=userid });
     }
