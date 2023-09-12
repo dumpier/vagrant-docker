@@ -1,5 +1,5 @@
-io = require('socket.io')(http);
-storage = require('./storage').instance();
+const io = require('socket.io')(http);
+const storage = require('./storage').instance();
 
 io.on('connection', (socket)=>{
   ChatEvent.instance(socket).handle();
