@@ -1,46 +1,49 @@
 const ChatStorage = {
-  data:{ rooms: {}, users: {}, },
-
   instance(){
-    const obj = Object.assign({}, this);
-    [obj.user, obj.message, ].forEach((p)=>{Object.assign(p,obj);});
+    const obj = Object.create(ChatStorage);
     // 最初から５つのルームを用意
-    [1,2,3,4,5].forEach((i)=>{ obj.data.rooms[i] = Room.instance(i); });
+    [1,2,3,4,5].forEach((i)=>{ Data.rooms[i] = Room.instance(i); });
     return obj;
   },
-
-  rooms(roomid){ return roomid==undefined ? this.data.rooms : this.data.rooms[roomid]; },
 }
 
 ChatStorage.user = {
-  roomid(userid) { return this.data.users[userid] ?? 1; },
+  roomid(userid) {
+    console.log("[USERS]", Data.users);
+    const roomid = Data.users[userid] ?? 1;
+    console.log("[USERS]", roomid, Data.users);
+    return roomid;
+  },
   has(userid, roomid){ return this.roomid(userid)==roomid; },
-  all(roomid){ return Object.keys(this.rooms(roomid).users); },
-  // TODO 他のルームに入ってないかのチェック等
-  set(roomid, users){ this.data.users = users; return this; },
+  all(roomid){ return Object.keys(Data.rooms[roomid].users); },
   add(userid, roomid){ return this.change(userid, roomid ?? 1); },
   leave(userid){
     const roomid = this.roomid();
-    delete this.data.users[userid];
-    delete this.data.rooms[roomid].users[userid]
+    delete Data.users[userid];
+    delete Data.rooms[roomid].users[userid]
     return this;
   },
+  enter(userid, roomid){ return this.change(userid, roomid); },
   change(userid, roomid){
-    const roomid_old = this.data.users[userid];
+    const roomid_old = Data.users[userid];
     if (roomid_old) {
-      delete this.data.rooms[roomid_old].users[userid];
+      delete Data.rooms[roomid_old].users[userid];
     }
-    this.data.users[userid] = roomid;
-    this.data.rooms[roomid].users[userid] = 1;
+    Data.users[userid] = roomid;
+    Data.rooms[roomid].users[userid] = 1;
     return this;
   },
 }
 
 ChatStorage.message = {
-  all(roomid){ return this.data.rooms[roomid].msgs; },
-  add(roomid, userid, msg){ const obj = Message.instance(roomid, userid, msg); this.rooms(roomid).msgs.push(obj); return obj; },
+  all(roomid){ return Data.rooms[roomid].msgs; },
+  add(roomid, userid, msg){ const obj = Message.instance(roomid, userid, msg); Data.rooms[roomid].msgs.push(obj); return obj; },
 }
 
+const Data = {
+  rooms: {},
+  users: {},
+}
 
 const Room = {
   id: 1, msgs: [], users: {},

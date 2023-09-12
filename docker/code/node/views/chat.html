@@ -78,8 +78,8 @@ var chat = chat || {
 
   // メッセージを送った際
   onMessage(input){
-    let datas = myjs.type(input)==="Array" ? input : [input];
-    datas.forEach((data)=>{
+    if (myjs.type(input)==="Array") { timeline.innerHTML = ""; }
+    (myjs.type(input)==="Array" ? input : [input]).forEach((data)=>{
       let item = document.createElement("li");
       item.innerHTML = `<span>${data.msg}</span><time><u>${data.userid.slice(0,5)}</u> ${data.time}</time>`;
       timeline.appendChild(item);
