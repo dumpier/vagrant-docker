@@ -6,18 +6,18 @@ ChatStorage.user = {
   roomid(userid) { return Data.users[userid] ?? "1"; },
   all(roomid){ return Object.keys(Data.rooms[roomid].users); },
   add(userid, roomid){ return this.change(userid, roomid); },
-  leave(userid){
-    const roomid = this.roomid(userid);
-    delete Data.users[userid];
-    delete Data.rooms[roomid].users[userid];
-    return this;
-  },
   enter(userid, roomid){ return this.change(userid, roomid); },
   change(userid, roomid){
     const roomid_old = Data.users[userid];
     if (roomid_old) { delete Data.rooms[roomid_old].users[userid]; }
     Data.users[userid] = roomid;
     Data.rooms[roomid].users[userid] = 1;
+    return this;
+  },
+  leave(userid){
+    const roomid = this.roomid(userid);
+    delete Data.users[userid];
+    delete Data.rooms[roomid].users[userid];
     return this;
   },
 }

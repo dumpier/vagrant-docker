@@ -9,7 +9,7 @@ process.on('uncaughtException', (err)=>{ console.log(err); });
 global.dir = require("./config/directory").instance(__dirname);
 
 // ルーティング処理
-require("./libs/router").instance().dispatch();
+require("./libs/routing").instance().dispatch();
 http.listen(3000, ()=>{ console.log('listening on *:3000'); });
 
 // チャット関連(socket.io)
