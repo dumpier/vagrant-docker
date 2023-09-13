@@ -39,7 +39,11 @@ const Data = {
 
 const Room = {
   id: null, msgs: null, users: null,
-  instance(id){ const obj = Object.create(Room); [obj.id, obj.msgs, obj.users] = [id, [], {}]; return obj; },
+  instance(id){
+    const obj = Object.create(Room);
+    [obj.id, obj.msgs, obj.users] = [id, [], {}];
+    return obj;
+  },
 }
 
 const Message = {

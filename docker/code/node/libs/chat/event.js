@@ -13,7 +13,6 @@ const ChatEvent = {
 
   onConnect(io, socket, storage){
     const [userid, roomid] = [socket.id, storage.user.roomid(socket.id)];
-    console.log(`# a user connected. [roomid:${roomid}][userid:${userid}]`);
 
     storage.user.add(userid, roomid);
     io.to(roomid).emit('chat user', storage.user.all(roomid));
@@ -24,7 +23,6 @@ const ChatEvent = {
   onMessage(io, socket, storage){
     socket.on('chat message', (msg)=>{
       const [userid, roomid] = [socket.id, storage.user.roomid(socket.id)];
-      console.log(`# message[userid:${userid}][roomid:${roomid}]`, msg);
 
       const data = storage.message.add(roomid, userid, msg);
       io.to(roomid).emit('chat message', data);
@@ -34,7 +32,6 @@ const ChatEvent = {
   onJoin(io, socket, storage){
     socket.on('join', (data)=>{
       const [userid, roomid] = [socket.id, storage.user.roomid(socket.id)];
-      console.log(`# ${userid} join. [enter:${data.roomid}][leave:${roomid}]`);
 
       socket.join(data.roomid);
       storage.user.change(userid, data.roomid);
@@ -52,7 +49,6 @@ const ChatEvent = {
   onDisconnect(io, socket, storage){
     socket.on("disconnect",()=>{
       const [userid, roomid] = [socket.id, storage.user.roomid(socket.id)];
-      console.log(`# a user disconnected. [roomid:${storage.user.roomid(userid)}][userid:${userid}]`);
 
       socket.leave(roomid);
       storage.user.leave(userid);
