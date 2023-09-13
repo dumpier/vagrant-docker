@@ -42,6 +42,21 @@ const form = document.getElementById("chat-send");
 const input = document.getElementById("chat-text");
 const messages = document.getElementById("sendButton");
 
+window.onload=()=>{
+
+  console.info(`#socket`, socket);
+  // 最初はデフォルトでRoom#1に入る
+  chat.join(1);
+  // メッセージの送信処理
+  form.addEventListener("submit", (ev)=>{ chat.send(ev); });
+  // ルーム変更時の処理
+  room.addEventListener("change", (ev)=>{ chat.join(ev.target.value); });
+  // 他のユーザーの入室退室があった際
+  socket.on("chat user", (users)=>{ chat.onUsers(users); });
+  // メッセージの受信
+  socket.on("chat message", (input)=>{ chat.onMessage(input); });
+}
+
 var chat = chat || {
   // 自分がメッセージを送る際
   send(ev){
@@ -74,20 +89,6 @@ var chat = chat || {
       timeline.scrollTo(0, timeline.scrollHeight);
     });
   },
-}
-
-window.onload=()=>{
-  console.info(`#socket`, socket);
-  // 最初はデフォルトでRoom#1に入る
-  chat.join(1);
-  // メッセージの送信処理
-  form.addEventListener("submit", function (ev) { chat.send(ev); });
-  // ルーム変更時の処理
-  room.addEventListener("change", function (ev) { chat.join(ev.target.value); });
-  // 他のユーザーの入室退室があった際
-  socket.on("chat user", function (users) { chat.onUsers(users); });
-  // メッセージの受信
-  socket.on("chat message", function (input) { chat.onMessage(input); });
 }
 </script>
 </body>

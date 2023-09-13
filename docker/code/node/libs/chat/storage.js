@@ -14,7 +14,6 @@ ChatStorage.user = {
   },
   enter(userid, roomid){ return this.change(userid, roomid); },
   change(userid, roomid){
-    console.log("user.change", userid, roomid);
     const roomid_old = Data.users[userid];
     if (roomid_old) { delete Data.rooms[roomid_old].users[userid]; }
     Data.users[userid] = roomid;
