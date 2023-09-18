@@ -2,6 +2,7 @@
 # # vi: set ft=ruby :
 
 # vagrant config
+$VM_BOX = 'almalinux/8'
 $VM_BOX = 'ailispaw/barge'
 
 
