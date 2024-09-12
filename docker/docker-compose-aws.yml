@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+  # Amazon SQSの代わりに使う
+  elasticmq:
+    image: softwaremill/elasticmq:latest
+    container_name: elasticmq
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.90
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+
+  # Amazon S3の代わりに使う
+  minio:
+    image: minio/minio:latest
+    container_name: local.minio
+    networks:
+      app_net:
+        ipv4_address: 172.24.0.91
+    ports:
+      - "9800:9000" # APIアクセス用
+      - "9801:9001" # 管理コンソール(GUI)用
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minio123
+    entrypoint: sh
+    command: -c "/usr/bin/minio server /export --address :9000 --console-address :9001"
+    volumes:
+      - /vagrant/docker-data/minio/data:/export
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.24.0.0/24
